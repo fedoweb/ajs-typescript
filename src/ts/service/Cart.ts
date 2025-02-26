@@ -1,10 +1,17 @@
 import Buyable from '../domain/Buyable';
+import Gadgets from '../domain/Gadgets';
 
 export default class Cart {
     private _items: Buyable[] = [];
 
     add(item: Buyable): void {
-        this._items.push(item);
+        const addItem = this._items.find(i => i.id === item.id);
+
+        if (addItem && 'quantity' in addItem) {
+            addItem.quantity += 1;
+        } else if (!addItem) {
+            this._items.push(item);
+        }
     }
 
     get items(): Buyable[] {
@@ -13,7 +20,15 @@ export default class Cart {
 
     getSumFull(): number {
         let sum: number = 0;
-        this.items.forEach(item => sum += item.price);
+
+        this._items.forEach(item => {
+            if ('quantity' in item) {
+                sum += (item.price * item.quantity);
+            } else {
+                sum += item.price;
+            }
+            
+        });
         return sum;
     }
 
@@ -23,11 +38,24 @@ export default class Cart {
     }
 
     deleteItem(id: number): void {
-        this.items.forEach((item) => {
-            if (item.id === id) {
-                const index = this.items.indexOf(item);
-                this.items.splice(index, 1);
+        this._items = this._items.filter(item => item.id !== id);
+    }
+
+
+    reduceQuantity(id: number): void {
+        const reduceItem = this._items.find(item => item.id === id);
+
+        if (reduceItem && 'quantity' in reduceItem) {
+            reduceItem.quantity > 1 ? reduceItem.quantity -= 1 : this.deleteItem(id);
+        }        
+    }
+
+    clear() {
+        this._items.forEach(item => {
+            if ('quantity' in item) {
+                item.quantity = 1;
             }
+        this._items = [];
         });
     }
 }

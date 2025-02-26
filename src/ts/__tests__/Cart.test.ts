@@ -2,11 +2,12 @@ import Cart from '../service/Cart';
 import Book from '../domain/Book';
 import MusicAlbum from '../domain/MusicAlbum';
 import Movie from '../domain/Movie';
+import Gadgets from '../domain/Gadgets';
 
-const cart = new Cart();
+const testCart = new Cart();
 
 test('new card should be empty', () => {
-  expect(cart.items.length).toBe(0);
+  expect(testCart.items.length).toBe(0);
 });
 
 
@@ -23,8 +24,8 @@ describe('class MusicAlbum', () => {
   });
 
   test ('should be add to Cart', () => {
-    cart.add(musicAlbum);
-    expect(cart.items.length).toBe(1);
+    testCart.add(musicAlbum);
+    expect(testCart.items.length).toBe(1);
   });
 });
 
@@ -43,8 +44,8 @@ describe('class Book', () => {
   });
 
   test ('should be add to Cart', () => {
-    cart.add(book);
-    expect(cart.items.length).toBe(2);
+    testCart.add(book);
+    expect(testCart.items.length).toBe(2);
   });
 });
 
@@ -71,24 +72,80 @@ describe('class Movie', () => {
   })
 
   test ('should be add to Cart', () => {
-    cart.add(movie);
-    expect(cart.items.length).toBe(3);
+    testCart.add(movie);
+    expect(testCart.items.length).toBe(3);
   });
 });
 
 describe('Cart method', () => {
-  test('should return full sum of cart', () => {
-    expect(cart.getSumFull()).toBe(1050);
+  test('should return full sum', () => {
+    expect(testCart.getSumFull()).toBe(1050);
   });
 
-  test('should return sum with discount 10% of cart', () => {
-    expect(cart.getSumDiscount(10)).toBe(945);
+  test('should return sum with discount 10%', () => {
+    expect(testCart.getSumDiscount(10)).toBe(945);
   });
 
   test('should delete item of ID', () => {
-    cart.deleteItem(365);
+    testCart.deleteItem(365);
 
-    expect(cart.items.length).toBe(2);
+    expect(testCart.items.length).toBe(2);
+  });
+});
+
+describe('class Gadgets', () => {
+  const gadget = new Gadgets(366, 'IPhone 16 Pro', 119000);
+
+  test('create new Gadget', () => {
+    expect(gadget).toEqual({
+      'id': 366,
+      'name': 'IPhone 16 Pro',
+      'price': 119000,
+      'quantity': 1
+    });
+  });
+
+  test('should add Gadgets from cart', () => {
+    testCart.add(gadget);
+
+    expect(testCart.items.length).toBe(3);
+  });
+
+  test('should add Gadgets to cart many times', () => {
+    
+    testCart.add(gadget);
+    testCart.add(gadget);
+
+    const item = testCart.items.find(item => item.id === gadget.id);
+    expect(item.quantity).toBe(3);
+    expect(testCart.items.length).toBe(3);
+  });
+
+  test('should return full sum', () => {
+    testCart.clear();
+
+    testCart.add(gadget);
+    testCart.add(gadget);
+
+    expect(testCart.getSumFull()).toBe(238000);
+  });
+
+  test('should return sum with discount 10%', () => {
+    expect(testCart.getSumDiscount(10)).toBe(214200);
+  });
+
+  test('should reduce by one unit', () => {
+    testCart.reduceQuantity(366);
+
+    const item = testCart.items.find(item => item.id === 366);
+    expect(item.quantity).toBe(1);
+  });
+
+  test('should delete gadget from cart', () => {
+    testCart.reduceQuantity(366);
+
+    const item = testCart.items.find(item => item.id === 366);
+    expect(item).toEqual(undefined);
   });
 });
 
