@@ -1,5 +1,4 @@
 import Buyable from '../domain/Buyable';
-import Gadgets from '../domain/Gadgets';
 
 export default class Cart {
     private _items: Buyable[] = [];
@@ -50,7 +49,7 @@ export default class Cart {
         }        
     }
 
-    clear() {
+    clear(): void {
         this._items.forEach(item => {
             if ('quantity' in item) {
                 item.quantity = 1;
