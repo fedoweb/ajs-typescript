@@ -27,6 +27,16 @@ describe('class MusicAlbum', () => {
     testCart.add(musicAlbum);
     expect(testCart.items.length).toBe(1);
   });
+
+  test ('should be dont add to Cart', () => {
+    testCart.add(musicAlbum);
+    expect(testCart.items.length).toBe(1);
+  });
+
+  test ('should be dont reduce musicAlbum to Cart', () => {
+    testCart.reduceQuantity(364);
+    expect(testCart.items.length).toBe(1);
+  });
 });
 
 
@@ -147,5 +157,6 @@ describe('class Gadgets', () => {
     const item = testCart.items.find(item => item.id === 366);
     expect(item).toEqual(undefined);
   });
+
 });
 
